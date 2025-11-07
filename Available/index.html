@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Available Inventory</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1 class="site-title">Available Inventory</h1>
+  <div class="container" id="card-list">
+    <!-- Cards will be injected here -->
+  </div>
+  
+  <!-- Modal for card view -->
+  <div id="car-modal" class="modal" style="display:none;">
+    <div class="modal-bg" onclick="closeModal(event)"></div>
+    <div class="modal-content" tabindex="0">
+      <button class="close-btn" onclick="closeModal(event)">×</button>
+      <div class="modal-inner">
+        <div class="modal-gallery-section">
+          <div class="modal-image-carousel" id="modal-images"></div>
+        </div>
+        <div class="modal-info-section" id="modal-details"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for fullscreen image -->
+  <div id="img-modal" class="modal" style="display:none;">
+    <div class="modal-bg" onclick="closeImgModal(event)"></div>
+    <div class="img-modal-content" tabindex="0">
+      <button class="close-btn" onclick="closeImgModal(event)">×</button>
+      <img id="full-img" src="" alt="Car picture" />
+    </div>
+  </div>
+  <script src="script-available.js"></script>
+</body>
+</html>
