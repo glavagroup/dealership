@@ -142,3 +142,35 @@ window.addEventListener('keydown', function(e){
 // Initial Data Load & Auto-refresh
 fetchData();
 setInterval(fetchData, AUTO_REFRESH_MS);
+// Modal view logic
+window.openCarModal = function(idx) {
+  const car = window.currentEntries[idx];
+  showCarModal(car);
+};
+
+function showCarModal(car) {
+  // ...existing code...
+  document.getElementById('car-modal').style.display = "flex";
+  document.querySelector('.modal-content').classList.remove('hide-modal');
+  document.querySelector('.modal-content').focus();
+  document.body.classList.add('modal-open'); // Prevent background scroll
+}
+
+window.closeModal = function(e) {
+  const modalContent = document.querySelector('.modal-content');
+  modalContent.classList.add('hide-modal');
+  setTimeout(() => {
+    document.getElementById('car-modal').style.display = "none";
+    modalContent.classList.remove('hide-modal');
+    document.body.classList.remove('modal-open');
+  }, 270);
+  if (e) e.stopPropagation();
+};
+
+// ESC also animates out
+window.addEventListener('keydown', function(e){
+  if (e.key === "Escape") {
+    window.closeModal();
+    window.closeImgModal();
+  }
+});
