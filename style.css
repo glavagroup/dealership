@@ -8,6 +8,8 @@
   --muted: #b3a596;
   --white: #ffffff;
 }
+
+/* --------- LAYOUT BASICS --------- */
 body {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
   background: var(--bg-black);
@@ -15,6 +17,7 @@ body {
   color: var(--white);
   -webkit-text-size-adjust: 100%;
 }
+
 .site-title {
   text-align: center;
   margin-top: 1.6em;
@@ -29,80 +32,88 @@ body {
   background: var(--bg-black);
   padding: .3em 0 .2em 0;
 }
+
+/* ---- CARDS: DESKTOP ---- */
 .container {
-  max-width: 1200px;
+  max-width: 1350px;
   margin: auto;
-  padding: 1.2rem 0.6rem 1.2rem 0.6rem;
+  padding: 1.2rem 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-  gap: 1.1rem;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2.2rem;
 }
+
 .card {
   background: var(--card-bg);
-  border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.19);
-  transition: box-shadow 0.23s, transform 0.14s;
+  border-radius: 20px;
+  box-shadow: 0 6px 40px rgba(0,0,0,0.18);
+  transition: box-shadow 0.24s, transform 0.14s;
   cursor: pointer;
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1.3px solid var(--gold2);
-  padding-bottom: 0;
+  border: 1.6px solid var(--gold2);
 }
+
 .card:hover, .card:focus {
-  box-shadow: 0 8px 28px var(--gold3), 0 3px 11px #000a;
-  transform: scale(1.011);
+  box-shadow: 0 16px 40px var(--gold3), 0 3px 11px #000a;
+  transform: scale(1.023);
 }
+
 .card img.main-image {
   width: 100%;
-  height: 170px;
+  height: 270px;
   object-fit: cover;
-  border-bottom: 1.3px solid var(--gold2);
+  border-bottom: 1.6px solid var(--gold2);
   background: #222;
 }
+
 .card-content {
-  padding: 0.67rem 0.6rem 0.52rem 0.60rem;
+  padding: 1.3rem 1.3rem 1rem 1.3rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
 .make-model {
-  font-size: 1.17em;
+  font-size: 1.35em;
   font-weight: 800;
-  margin-bottom: .28rem;
+  margin-bottom: .45rem;
   color: var(--gold1);
-  letter-spacing: 1.1px;
+  letter-spacing: 1.2px;
 }
+
 .price {
-  font-size: 1.09em;
+  font-size: 1.18em;
   color: var(--gold3);
   font-weight: 600;
   margin-bottom: 0.27rem;
   letter-spacing: .3px;
 }
+
 .card-details {
-  font-size: 1em;
+  font-size: 1.08em;
   color: var(--muted);
-  margin-bottom: 0.12rem;
+  margin-bottom: 0.16em;
   font-weight: 500;
 }
+
 .card-description {
-  font-size: 0.98em;
+  font-size: 0.99em;
   color: var(--white);
-  margin: 0.21em 0 0.09em 0;
+  margin: 0.35em 0 0.11em 0;
   opacity: 0.97;
 }
 
-/* -------- MODAL --------- */
+/* --- MODAL DESKTOP ---- */
 @keyframes popIn {
   0% { transform: scale(0.92) translateY(28px); opacity: 0.33; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 @keyframes popOut {
   0% { transform: scale(1) translateY(0); opacity: 1; }
-  100% { transform: scale(0.86) translateY(24px); opacity: 0.18; }
+  100% { transform: scale(0.89) translateY(22px); opacity: 0.14; }
 }
 .modal {
   position: fixed;
@@ -117,165 +128,156 @@ body {
   top:0; left:0; right:0; bottom:0;
   background: rgba(24,12,6,0.88);
   backdrop-filter: blur(10px) brightness(0.89) saturate(1.03);
-  transition: background 0.39s, backdrop-filter 0.39s;
   cursor: pointer;
   z-index: 1 !important;
 }
 .modal-content {
   background: var(--card-bg);
-  border-radius: 15px;
-  max-width: 97vw;
+  border-radius: 22px;
+  max-width: 99vw;
   min-width: 0;
-  width: min(96vw, 930px);
-  max-height: 93vh;
-  box-shadow: 0 16px 29px 0px var(--gold3),0 2px 7px 4px rgba(44,32,8,0.18);
+  width: min(96vw, 1180px);
+  max-height: 96vh;
+  box-shadow: 0 22px 45px 2px var(--gold3),0 3px 13px 7px rgba(44,32,8,0.19);
   position: relative;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.02em;
+  gap: 0.03em;
   animation: popIn 0.28s cubic-bezier(.19,.9,.39,1) both;
   z-index: 3;
   transition: box-shadow 0.09s, transform 0.08s;
   outline: none;
-  padding: 0.02em 0.02em;
+  padding: 0.6em 0.6em;
 }
 .modal-content.hide-modal {
   animation: popOut 0.21s cubic-bezier(.54,.02,.92,.75) both;
 }
 .modal-inner {
   display: flex;
-  gap: 0.4em; /* Tight gap! THIS IS THE MAIN "TIGHTEN" */
+  gap: 2.2em;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
 }
-@media (max-width:900px) {
-  .modal-inner {
-    flex-direction: column;
-    gap: 0.36em;
-  }
-  .modal-content { width: 99vw; max-width: 100vw; padding: 0.01em 0;}
-}
 .modal-gallery-section {
-  flex: 1 0 205px;
-  min-width: 112px;
-  max-width: 240px;
+  flex: 1 0 340px;
+  min-width: 210px;
+  max-width: 430px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0.3em 0.1em 0.06em 0.15em;
+  padding: 0.62em 0.32em 0.06em 0.23em;
 }
 .modal-image-carousel {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.17em;
   width: 100%;
   margin: .19em 0 0.04em 0;
 }
 .modal-main-img {
-  border-radius: 5px;
-  width: 98%;
-  max-width: 210px;
-  min-width: 40px;
-  height: 90px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 420px;
+  min-width: 100px;
+  height: 270px;
   object-fit: cover;
   box-shadow: 0 2px 7px var(--gold3);
   cursor: pointer;
-  border: 1px solid var(--gold2);
-  margin-bottom: 0.10em;
+  border: 1.2px solid var(--gold2);
+  margin-bottom: 0.25em;
   background: #191816;
   display: block;
 }
 .modal-gallery-img-row {
   display: flex;
-  gap: .15em;
+  gap: .4em;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
 .modal-gallery-img-row img {
-  border-radius: 3px;
-  width: 24px;
-  height: 18px;
+  border-radius: 7px;
+  width: 70px;
+  height: 55px;
   object-fit: cover;
-  border: 1px solid var(--gold3);
+  border: 1.2px solid var(--gold3);
   box-shadow: 0 1px 2px var(--gold1);
   cursor: pointer;
   background: #191816;
   transition: border .08s;
 }
 .modal-gallery-img-row img:hover {
-  border: 1.3px solid var(--gold2);
+  border: 1.5px solid var(--gold2);
 }
 .modal-info-section {
-  flex: 2 1 320px;
-  max-width: 700px;
-  min-width: 120px;
-  padding: 0.3em 0.23em 0.22em 0.30em;
+  flex: 2 1 480px;
+  max-width: 620px;
+  min-width: 240px;
+  padding: 0.3em 0.5em 0.18em 1.4em;
   display: flex;
   flex-direction: column;
-  gap: 0.4em;
+  gap: 0.7em;
   align-items: flex-start;
   justify-content: flex-start;
 }
 .modal-make-model {
-  font-size: 1.18em;
+  font-size: 2em;
   font-weight: 900;
   color: var(--accent);
-  margin-bottom: 0.08em;
-  letter-spacing: 1.2px;
+  margin-bottom: 0.18em;
+  letter-spacing: 2px;
 }
 .modal-price {
-  font-size: 1em;
+  font-size: 1.25em;
   color: var(--gold3);
   font-weight: bold;
-  margin-bottom: 0.08em;
+  margin-bottom: 0.19em;
   letter-spacing: 1px;
 }
 .modal-specs-row {
   display: flex;
-  gap: 0.09em;
+  gap: 0.29em;
   flex-wrap: wrap;
-  font-size: 0.94em;
+  font-size: 1.11em;
 }
 .modal-spec {
   background: #201a14;
-  border-radius: 4px;
-  padding: 0.11em 0.41em;
+  border-radius: 8px;
+  padding: 0.20em 0.72em;
   color: var(--gold2);
-  font-weight: 540;
-  margin-bottom: 0.04em;
-  box-shadow: 0 1px 2px var(--gold1);
+  font-weight: 600;
+  margin-bottom: 0.08em;
+  box-shadow: 0 1px 3px var(--gold1);
 }
 .modal-desc, .modal-feats {
-  font-size: 0.93em;
+  font-size: 1.07em;
   color: var(--white);
   opacity: 0.98;
-  margin-bottom: 0.13em;
+  margin-bottom: 0.25em;
   background: #232019;
-  padding: 0.19em;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px var(--gold2);
+  padding: 0.6em;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px var(--gold2);
 }
 .modal-desc-title, .modal-feats-title {
   color: var(--accent);
   font-weight: 670;
-  font-size: .93em;
-  margin-bottom: .09em;
-  letter-spacing: 0.97px;
+  font-size: 1.02em;
+  margin-bottom: .13em;
+  letter-spacing: 1.1px;
 }
 .close-btn {
   position: absolute;
-  top: 9px; right: 10px;
-  font-size: 1.18em;
+  top: 16px; right: 18px;
+  font-size: 2em;
   color: var(--gold3);
   background: none;
   border: none;
   cursor: pointer;
   z-index: 12;
-  padding: .07em .21em;
-  border-radius: 6px;
+  padding: .08em .23em;
+  border-radius: 8px;
   transition: background .13s;
   touch-action: manipulation;
 }
@@ -284,7 +286,107 @@ body {
   color: var(--white);
 }
 
-/* --- Image Modal Fixed --- */
+/* -------- MOBILE ADAPTION -------- */
+@media (max-width:1150px) {
+  .container {
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 1.2rem;
+    padding: 0.9rem 0.5rem;
+  }
+  .modal-content { width: 98vw; padding:0.25em 0.17em;}
+}
+
+@media (max-width:800px) {
+  .container {
+    grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+    gap: 0.45rem;
+    padding: 0.5rem 0.03rem;
+  }
+  .card img.main-image {
+    height: 130px;
+  }
+  .card-content {
+    padding: 0.55rem 0.49rem 0.45rem 0.45rem;
+  }
+}
+
+@media (max-width:600px) {
+  .site-title { font-size: 1.21em; margin-top: .9em;}
+  .card {
+    border-radius: 12px;
+  }
+  .card img.main-image {
+    height: 90px;
+  }
+  .container {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.25rem;
+    max-width: 99vw;
+  }
+  .card-content {
+    padding: 0.19rem 0.12rem 0.14rem 0.18rem;
+  }
+  .make-model { font-size: 0.95em;}
+  .price { font-size: 0.88em;}
+  .card-details {font-size: 0.82em;}
+  .card-description { font-size: 0.82em;}
+  /* MODAL FULLSCREEN ON MOBILE */
+  .modal-content {
+    border-radius: 0;
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 99vh;
+    min-height: 99vh;
+    padding: 0;
+    margin: 0;
+  }
+  .modal-inner {
+    flex-direction: column;
+    gap: 0.7em;
+  }
+  .modal-gallery-section {
+    max-width: 100vw;
+    width: 100vw;
+    min-width: 120px;
+    padding: 0.7em 0 0.2em 0.13em;
+    align-items: center;
+  }
+  .modal-image-carousel, .modal-gallery-img-row {
+    align-items: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .modal-main-img {
+    max-width: 99vw;
+    width: 96vw;
+    height: 44vw;
+    min-height: 120px;
+    margin-bottom: 0.35em;
+  }
+  .modal-gallery-img-row img {
+    width: 40px;
+    height: 30px;
+  }
+  .modal-info-section {
+    min-width: 0;
+    width: 96vw;
+    max-width: 96vw;
+    padding: 0.3em 0.17em 0.18em 0.3em;
+    gap: 0.48em;
+    align-items: flex-start;
+  }
+  .modal-make-model { font-size: 1.35em;}
+  .modal-price { font-size: 1.08em;}
+  .modal-specs-row { font-size: 1em;}
+  .modal-desc, .modal-feats { font-size: 0.98em;}
+  .close-btn {
+    font-size: 1.6em;
+    top: 11px; right: 12px;
+  }
+}
+
+/* --- FULLSCREEN IMAGE MODAL (unchanged) --- */
 .img-modal-content {
   background: none !important;
   box-shadow: none !important;
