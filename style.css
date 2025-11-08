@@ -14,7 +14,6 @@ body {
   background: var(--bg-black);
   margin: 0;
   color: var(--white);
-  /* Prevent font scaling issues on iOS Safari */
   -webkit-text-size-adjust: 100%;
 }
 
@@ -28,12 +27,11 @@ body {
   font-weight: 700;
   position: sticky;
   top: 0;
-  background: var(--bg-black);
   z-index: 100;
+  background: var(--bg-black);
   padding: .5em 0;
 }
 
-/* ---- Responsive Grid ---- */
 .container {
   max-width: 1200px;
   margin: auto;
@@ -57,7 +55,6 @@ body {
   }
 }
 
-/* More aggressive for mobile */
 @media (max-width: 420px) {
   .container {
     padding: 0.05em;
@@ -72,7 +69,23 @@ body {
   .expand-btn { font-size: 0.92em; }
 }
 
-/* Card and modal remain the same as your original, with this change for image: */
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.33);
+  transition: box-shadow 0.22s, transform 0.18s;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 2px solid var(--gold2);
+}
+.card:hover,
+.card:focus {
+  box-shadow: 0 16px 48px var(--gold3);
+  transform: scale(1.02);
+}
 .card img.main-image {
   width: 100%;
   height: 210px;
@@ -88,65 +101,49 @@ body {
     max-height: 200px;
   }
 }
-
-/* Modal styles: mobile fixes */
-@media (max-width: 900px) {
-  .modal-content {
-    padding: 0.7em 0.2em;
-    max-width: 99vw;
-    width: 99vw;
-  }
-  .modal-inner {
-    flex-direction: column;
-    gap: 1em;
-  }
-  .modal-gallery-section, .modal-info-section {
-    max-width: 100%;
-    min-width: initial;
-    padding: 0.5em 0.3em 0.5em 0.3em;
-  }
-  .modal-make-model { font-size: 1.2em; }
-  .modal-price { font-size: 1em;}
-  .modal-desc, .modal-feats { padding: 0.6em;}
-  .close-btn { top: 10px; right:12px; font-size: 1.3em;}
+.card-content {
+  padding: 1.4rem 1.5rem 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
-
-/* Modal touch padding and inputs for phones */
-@media (max-width: 420px) {
-  .modal-content {
-    min-width: unset;
-    padding: 0.18em 0.1em;
-  }
-  .close-btn {
-    font-size: 1.1em;
-    top: 5px; right: 8px;
-    padding: .12em .22em;
-  }
-  .modal-gallery-img-row img {
-    width: 52px;
-    height: 41px;
-  }
-  .modal-main-img {
-    height: 118px;
-    max-width: 97vw;
-  }
-  .modal-make-model, .modal-price {
-    font-size: 1em;
-  }
+.make-model {
+  font-size: 1.37em;
+  font-weight: 800;
+  margin-bottom: .45rem;
+  color: var(--gold1);
+  letter-spacing: 1.4px;
 }
-
-.button, .expand-btn, .close-btn {
-  /* Make buttons easier to tap on mobile */
+.price {
+  font-size: 1.22em;
+  color: var(--gold3);
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  letter-spacing: 1px;
+}
+.card-details {
+  font-size: 1em;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+.card-description {
+  font-size: 1em;
+  color: var(--white);
+  margin: 0.7em 0 0.3em 0;
+  opacity: 0.96;
+}
+.expand-btn,
+.button, .close-btn {
   min-width: 38px;
   min-height: 38px;
   touch-action: manipulation;
 }
-/* ...existing styles... */
 
-/* Popout animation for modal */
+/* Animation for modal card (pop in/out) */
 @keyframes popIn {
   0% {
-    transform: scale(0.94) translateY(40px);
+    transform: scale(0.93) translateY(40px);
     opacity: 0.45;
   }
   100% {
@@ -160,70 +157,249 @@ body {
     opacity: 1;
   }
   100% {
-    transform: scale(0.94) translateY(40px);
-    opacity: 0.3;
+    transform: scale(0.93) translateY(40px);
+    opacity: 0.25;
   }
 }
 
-/* Modal background smoky/blurred */
+.modal {
+  position: fixed;
+  z-index: 80;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .modal-bg {
   position: absolute;
   top:0; left:0; right:0; bottom:0;
-  background: rgba(32,22,10,0.85);
-  backdrop-filter: blur(7px) saturate(120%);
+  background: rgba(32,22,10,0.87);
+  backdrop-filter: blur(8px) saturate(120%);
   transition: background 0.4s, backdrop-filter 0.4s;
   cursor: pointer;
   z-index: 1;
 }
 
-/* Make modal-content look like an elevated card */
+/* Modal content: animated, card-like */
 .modal-content {
   background: var(--card-bg);
-  border-radius: 24px;
+  border-radius: 28px;
   max-width: 97vw;
   min-width: 0;
   width: 95vw;
   max-height: 97vh;
-  min-height: 300px;
-  box-shadow: 0 18px 60px 0px var(--gold2), 0 2px 40px 10px rgba(44,32,8,0.22);
+  min-height: 380px;
+  box-shadow: 0 18px 60px 0px var(--gold2),0 2px 40px 15px rgba(44,32,8,0.24);
   position: relative;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
-  animation: popIn 0.38s cubic-bezier(.21,.99,.37,1) both;
+  animation: popIn 0.35s cubic-bezier(.22,.98,.35,1) both;
   z-index: 3;
-  transition: box-shadow 0.22s, transform 0.25s;
+  transition: box-shadow 0.22s, transform 0.22s;
+  outline: none;
+}
+.modal-content.hide-modal {
+  animation: popOut 0.28s cubic-bezier(.54,.01,.92,.55) both;
 }
 
-/* Fullscreen on mobile! */
-@media (max-width: 750px) {
+@media (max-width: 900px) {
   .modal-content {
+    padding: 0.7em 0.2em;
+    max-width: 99vw;
+    width: 99vw;
     border-radius: 0 0 22px 22px;
-    width: 100vw;
-    min-width: 0;
-    padding: 0.2em 0.03em;
+  }
+  .modal-inner {
+    flex-direction: column;
+    gap: 1em;
+  }
+  .modal-gallery-section, .modal-info-section {
+    max-width: 100%;
+    min-width: initial;
+    padding: 0.6em 0.2em 0.6em 0.2em;
+  }
+  .modal-make-model { font-size: 1.2em; }
+  .modal-price { font-size: 1em;}
+  .modal-desc, .modal-feats { padding: 0.57em;}
+  .close-btn { top: 13px; right:13px; font-size: 1.23em;}
+}
+@media (max-width: 500px) {
+  .modal-content {
+    min-width: unset;
+    padding: 0.10em 0.04em;
     max-width: 100vw;
-    min-height: 90vh;
+    width: 100vw;
+    border-radius: 0 0 16px 16px;
+    min-height: 70vw;
+  }
+  .close-btn {
+    font-size: 1.05em;
+    top: 5px; right: 8px;
+    padding: .11em .24em;
+  }
+  .modal-main-img {
+    max-width: 99vw;
+    height: 109px;
+  }
+  .modal-make-model, .modal-price {
+    font-size: .98em;
   }
 }
 
-/* On close: animate out */
-.modal-content.hide-modal {
-  animation: popOut 0.31s cubic-bezier(.48,.02,1,.71) both;
+.modal-inner {
+  display: flex;
+  gap: 2.1em;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
 }
-
-/* Card in modal: popout effect for clarity */
-.modal-content,
-.modal-inner,
-.modal-gallery-section,
+.modal-gallery-section {
+  flex: 1 0 315px;
+  min-width: 240px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.modal-image-carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  width: 100%;
+  margin: 1em 0 0.3em 0;
+}
+.modal-main-img {
+  border-radius: 12px;
+  width: 97%;
+  max-width: 420px;
+  height: 240px;
+  object-fit: cover;
+  box-shadow: 0 4px 24px var(--gold3);
+  cursor: pointer;
+  border: 1.5px solid var(--gold2);
+  margin-bottom: 0.75em;
+  background: #191816;
+}
+.modal-gallery-img-row {
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.modal-gallery-img-row img {
+  border-radius: 8px;
+  width: 80px;
+  height: 66px;
+  object-fit: cover;
+  border: 1.5px solid var(--gold3);
+  box-shadow: 0 1px 10px var(--gold1);
+  cursor: pointer;
+  background: #191816;
+  transition: border .15s;
+}
+.modal-gallery-img-row img:hover {
+  border: 2px solid var(--gold2);
+}
 .modal-info-section {
-  /* Slight elevation and more breathing room in modal vs grid */
-  box-shadow: none !important;
+  flex: 1 1 380px;
+  max-width: 520px;
+  min-width: 270px;
+  padding: 1.4em 2em 1.2em 0.9em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1em;
+}
+.modal-make-model {
+  font-size: 2.1em;
+  font-weight: 900;
+  color: var(--accent);
+  margin-bottom: 0.12em;
+  letter-spacing: 2px;
+}
+.modal-price {
+  font-size: 1.5em;
+  color: var(--gold3);
+  font-weight: bold;
+  margin-bottom: 0.4em;
+  letter-spacing: 1px;
+}
+.modal-specs-row {
+  display: flex;
+  gap: 1.1em;
+  flex-wrap: wrap;
+  font-size: 1.1em;
+}
+.modal-spec {
+  background: #201a14;
+  border-radius: 7px;
+  padding: 0.28em 1em;
+  color: var(--gold2);
+  font-weight: 600;
+  margin-bottom: 0.12em;
+  box-shadow: 0 1px 6px var(--gold1);
+}
+.modal-desc, .modal-feats {
+  font-size: 1.07em;
+  color: var(--white);
+  opacity: 0.92;
+  margin-bottom: 1em;
+  background: #232019;
+  padding: 1em;
+  border-radius: 8px;
+  box-shadow: 0 1px 7px var(--gold2);
+}
+.modal-desc-title, .modal-feats-title {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.06em;
+  margin-bottom: .7em;
+  letter-spacing: 1.5px;
+}
+.close-btn {
+  position: absolute;
+  top: 20px; right: 25px;
+  font-size: 2em;
+  color: var(--gold3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 99;
+  padding: .24em .68em;
+  border-radius: 9px;
+  transition: background .17s;
+}
+.close-btn:hover,
+.close-btn:focus {
+  background: var(--gold2);
+  color: var(--white);
 }
 
-
-/* OPTIONAL: Remove background scroll when modal open */
+.img-modal-content {
+  background: transparent;
+  box-shadow: none;
+  position: relative;
+  max-width: 95vw;
+  max-height: 93vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:0;
+}
+#full-img {
+  max-width: 95vw;
+  max-height: 93vh;
+  display: block;
+  border-radius: 16px;
+  box-shadow: 0 18px 48px var(--gold3);
+  background: #f3f7ff;
+}
+.img-modal-content .close-btn {
+  top:12px; right:18px;
+  padding:0.2em 0.6em;
+}
 body.modal-open {
   overflow: hidden;
 }

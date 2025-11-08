@@ -50,7 +50,7 @@ function renderCards(entries) {
   const container = document.getElementById('card-list');
   container.innerHTML = entries.map((car, idx) => `
     <div class="card" tabindex="0" onclick="openCarModal(${idx})">
-      <img class="main-image" src="${car.Image || 'https://via.placeholder.com/320x180?text=No+Image'}" alt="${car.Make} ${car.Model}" />
+      <img class="main-image" src="${car.Image || 'https://via.placeholder.com/320x180?text=No+Image'}" alt="${car.Make || ''} ${car.Model || ''}" />
       <div class="card-content">
         <div class="make-model">${car.Make || ''} ${car.Model || ''}</div>
         <div class="price">${formatPrice(car.Price)}</div>
@@ -68,7 +68,7 @@ function renderCards(entries) {
   window.currentEntries = entries;
 }
 
-// Modal view logic
+// ---- MODAL ANIMATED POPUP LOGIC ----
 window.openCarModal = function(idx) {
   const car = window.currentEntries[idx];
   showCarModal(car);
@@ -81,8 +81,6 @@ function showCarModal(car) {
   if (car.Gallery) {
     images = images.concat(car.Gallery.split(';').map(u => u.trim()).filter(u => !!u));
   }
-
-  // Main image (large), gallery images (small)
   document.getElementById('modal-images').innerHTML = `
     <img class="modal-main-img" src="${images[0] || 'https://via.placeholder.com/450x220?text=No+Image'}" alt="Main Car Image"
       onclick="openImgModal('${encodeURIComponent(images[0]||'') || ''}')"/>
@@ -92,7 +90,6 @@ function showCarModal(car) {
       ).join('')}
     </div>
   `;
-
   document.getElementById('modal-details').innerHTML = `
       <div class="modal-make-model">${car.Make || ''} ${car.Model || ''}</div>
       <div class="modal-price">${formatPrice(car.Price)}</div>
@@ -107,55 +104,17 @@ function showCarModal(car) {
       <div class="modal-desc"><span class="modal-desc-title">Description</span><br>${car.Description || ''}</div>
       <div class="modal-feats"><span class="modal-feats-title">Features</span><br>${car.Features || ''}</div>
   `;
-  document.getElementById('car-modal').style.display = "flex";
-  document.querySelector('.modal-content').focus();
+  const carModal = document.getElementById('car-modal');
+  carModal.style.display = "flex";
+  document.body.classList.add('modal-open');
+  // Reset any pending hide-modal from close, force animation replay
+  const modalContent = document.querySelector('.modal-content');
+  modalContent.classList.remove('hide-modal');
+  void modalContent.offsetWidth; // Hack: force browser repaint so animation always plays
+  modalContent.focus();
 }
 
-window.closeModal = function(e) {
-  document.getElementById('car-modal').style.display = "none";
-  if (e) e.stopPropagation();
-}
-
-// Fullscreen image modal
-window.openImgModal = function(urlEnc) {
-  const url = decodeURIComponent(urlEnc);
-  const imgModal = document.getElementById('img-modal');
-  document.getElementById('full-img').src = url;
-  imgModal.style.display = "flex";
-  document.querySelector('.img-modal-content').focus();
-};
-window.closeImgModal = function(e) {
-  document.getElementById('img-modal').style.display = "none";
-  document.getElementById('full-img').src = '';
-  if (e) e.stopPropagation();
-};
-
-// Allow ESC to close modals
-window.addEventListener('keydown', function(e){
-  if (e.key === "Escape") {
-    document.getElementById('car-modal').style.display = "none";
-    document.getElementById('img-modal').style.display = "none";
-    document.getElementById('full-img').src = '';
-  }
-});
-
-// Initial Data Load & Auto-refresh
-fetchData();
-setInterval(fetchData, AUTO_REFRESH_MS);
-// Modal view logic
-window.openCarModal = function(idx) {
-  const car = window.currentEntries[idx];
-  showCarModal(car);
-};
-
-function showCarModal(car) {
-  // ...existing code...
-  document.getElementById('car-modal').style.display = "flex";
-  document.querySelector('.modal-content').classList.remove('hide-modal');
-  document.querySelector('.modal-content').focus();
-  document.body.classList.add('modal-open'); // Prevent background scroll
-}
-
+// Popup close with animation + restore scroll
 window.closeModal = function(e) {
   const modalContent = document.querySelector('.modal-content');
   modalContent.classList.add('hide-modal');
@@ -167,10 +126,30 @@ window.closeModal = function(e) {
   if (e) e.stopPropagation();
 };
 
-// ESC also animates out
+// Fullscreen image modal
+window.openImgModal = function(urlEnc) {
+  const url = decodeURIComponent(urlEnc);
+  const imgModal = document.getElementById('img-modal');
+  document.getElementById('full-img').src = url;
+  imgModal.style.display = "flex";
+  document.querySelector('.img-modal-content').focus();
+  document.body.classList.add('modal-open');
+};
+window.closeImgModal = function(e) {
+  document.getElementById('img-modal').style.display = "none";
+  document.getElementById('full-img').src = '';
+  document.body.classList.remove('modal-open');
+  if (e) e.stopPropagation();
+};
+
+// ESC closes modals with animation
 window.addEventListener('keydown', function(e){
   if (e.key === "Escape") {
     window.closeModal();
     window.closeImgModal();
   }
 });
+
+// Initial Data Load & Auto-refresh
+fetchData();
+setInterval(fetchData, AUTO_REFRESH_MS);
