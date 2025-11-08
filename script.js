@@ -50,7 +50,7 @@ function renderCards(entries) {
   const container = document.getElementById('card-list');
   container.innerHTML = entries.map((car, idx) => `
     <div class="card" tabindex="0" onclick="openCarModal(${idx})">
-      <img class="main-image" src="${car.Image || 'https://via.placeholder.com/320x180?text=No+Image'}" alt="${car.Make || ''} ${car.Model || ''}" />
+      <img class="main-image" src="${car.Image || 'https://via.placeholder.com/320x180?text=No+Image'}" alt="${(car.Make || '') + ' ' + (car.Model || '')}" />
       <div class="card-content">
         <div class="make-model">${car.Make || ''} ${car.Model || ''}</div>
         <div class="price">${formatPrice(car.Price)}</div>
@@ -122,7 +122,7 @@ window.closeModal = function(e) {
     document.getElementById('car-modal').style.display = "none";
     modalContent.classList.remove('hide-modal');
     document.body.classList.remove('modal-open');
-  }, 270);
+  }, 210);
   if (e) e.stopPropagation();
 };
 
