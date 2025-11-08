@@ -1,6 +1,8 @@
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSOVAB4idBjItPEOwxQvOGM4dAaYeWBuY49qlllo9bo-YW11K2e9wHLo3Ul8RKwiswKanQ29XbSMbZ8/pub?output=csv';
 const AUTO_REFRESH_MS = 30000;
 
+let currentEntries = [], imageGallery = [], imageGalleryIndex = 0;
+
 // Format utils
 function formatMileage(str) {
   if (!str) return '';
@@ -37,9 +39,8 @@ async function fetchData() {
   try {
     const res = await fetch(SHEET_CSV_URL);
     const csv = await res.text();
-    const entries = parseCSV(csv);
-
-    renderCards(entries);
+    currentEntries = parseCSV(csv);
+    renderCards(currentEntries);
   } catch (e) {
     document.getElementById('card-list').innerHTML = "<div style='color:red;font-weight:600;'>Error fetching listings.</div>";
   }
@@ -65,28 +66,28 @@ function renderCards(entries) {
       </div>
     </div>
   `).join('');
-  window.currentEntries = entries;
 }
 
 // ---- MODAL ANIMATED POPUP LOGIC ----
 window.openCarModal = function(idx) {
-  const car = window.currentEntries[idx];
+  const car = currentEntries[idx];
   showCarModal(car);
 };
 
 function showCarModal(car) {
   // Images: main + gallery
-  let images = [];
-  if (car.Image) images.push(car.Image);
+  imageGallery = [];
+  if (car.Image) imageGallery.push(car.Image);
   if (car.Gallery) {
-    images = images.concat(car.Gallery.split(';').map(u => u.trim()).filter(u => !!u));
+    imageGallery = imageGallery.concat(car.Gallery.split(';').map(u => u.trim()).filter(u => !!u));
   }
+  imageGalleryIndex = 0;
   document.getElementById('modal-images').innerHTML = `
-    <img class="modal-main-img" src="${images[0] || 'https://via.placeholder.com/450x220?text=No+Image'}" alt="Main Car Image"
-      onclick="openImgModal('${encodeURIComponent(images[0]||'') || ''}')"/>
+    <img class="modal-main-img" src="${imageGallery[0] || 'https://via.placeholder.com/450x220?text=No+Image'}" alt="Main Car Image"
+      onclick="openImgModal(0)"/>
     <div class="modal-gallery-img-row">
-      ${images.slice(1).map((url,idx) => 
-        `<img src="${url}" alt="Gallery ${idx+1}" onclick="openImgModal('${encodeURIComponent(url)}')" />`
+      ${imageGallery.slice(1).map((url,idx) => 
+        `<img src="${url}" alt="Gallery ${idx+1}" onclick="openImgModal(${idx+1})" />`
       ).join('')}
     </div>
   `;
@@ -107,14 +108,12 @@ function showCarModal(car) {
   const carModal = document.getElementById('car-modal');
   carModal.style.display = "flex";
   document.body.classList.add('modal-open');
-  // Reset any pending hide-modal from close, force animation replay
   const modalContent = document.querySelector('.modal-content');
   modalContent.classList.remove('hide-modal');
-  void modalContent.offsetWidth; // Hack: force browser repaint so animation always plays
+  void modalContent.offsetWidth;
   modalContent.focus();
 }
 
-// Popup close with animation + restore scroll
 window.closeModal = function(e) {
   const modalContent = document.querySelector('.modal-content');
   modalContent.classList.add('hide-modal');
@@ -126,14 +125,20 @@ window.closeModal = function(e) {
   if (e) e.stopPropagation();
 };
 
-// Fullscreen image modal
-window.openImgModal = function(urlEnc) {
-  const url = decodeURIComponent(urlEnc);
-  const imgModal = document.getElementById('img-modal');
-  document.getElementById('full-img').src = url;
-  imgModal.style.display = "flex";
+// --- Fullscreen image gallery modal with arrows ---
+function setImgModal(index) {
+  // Defensive: clamp index
+  if (!imageGallery.length) return;
+  imageGalleryIndex = Math.max(0, Math.min(index, imageGallery.length-1));
+  document.getElementById('full-img').src = imageGallery[imageGalleryIndex];
+  document.getElementById('img-modal').style.display = "flex";
+  document.getElementById('img-prev').disabled = imageGalleryIndex === 0;
+  document.getElementById('img-next').disabled = imageGalleryIndex === imageGallery.length - 1;
   document.querySelector('.img-modal-content').focus();
   document.body.classList.add('modal-open');
+}
+window.openImgModal = function(idx) {
+  setImgModal(idx);
 };
 window.closeImgModal = function(e) {
   document.getElementById('img-modal').style.display = "none";
@@ -141,13 +146,41 @@ window.closeImgModal = function(e) {
   document.body.classList.remove('modal-open');
   if (e) e.stopPropagation();
 };
-
-// ESC closes modals with animation
+// Arrow button listeners
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('img-prev').onclick = () => setImgModal(imageGalleryIndex - 1);
+  document.getElementById('img-next').onclick = () => setImgModal(imageGalleryIndex + 1);
+});
 window.addEventListener('keydown', function(e){
+  const imgModalOpen = document.getElementById('img-modal').style.display === "flex";
   if (e.key === "Escape") {
     window.closeModal();
     window.closeImgModal();
   }
+  if (imgModalOpen) {
+    if (e.key === "ArrowLeft") {
+      if (imageGalleryIndex > 0) setImgModal(imageGalleryIndex - 1);
+      e.preventDefault();
+    }
+    if (e.key === "ArrowRight") {
+      if (imageGalleryIndex < imageGallery.length-1) setImgModal(imageGalleryIndex + 1);
+      e.preventDefault();
+    }
+  }
+});
+// Simple mobile touch swipe for gallery (optional/bonus)
+let imgTouchStartX = null;
+document.getElementById('full-img').addEventListener('touchstart', e => {
+  if (e.touches.length === 1) imgTouchStartX = e.touches[0].clientX;
+});
+document.getElementById('full-img').addEventListener('touchend', e => {
+  if (imgTouchStartX === null) return;
+  const dx = e.changedTouches[0].clientX - imgTouchStartX;
+  if (Math.abs(dx) > 40) {
+    if (dx > 0 && imageGalleryIndex > 0) setImgModal(imageGalleryIndex - 1);
+    else if (dx < 0 && imageGalleryIndex < imageGallery.length-1) setImgModal(imageGalleryIndex + 1);
+  }
+  imgTouchStartX = null;
 });
 
 // Initial Data Load & Auto-refresh
